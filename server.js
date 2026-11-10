@@ -13,8 +13,8 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false } // Wajib untuk database cloud seperti Supabase
 });
 
-// Endpoint untuk menerima kritik & saran
-app.post('/api/v1/feedbacks', async (req, res) => {
+// Endpoint disesuaikan menjadi /api/feedbacks (tanpa /v1/) agar cocok dengan frontend
+app.post('/api/feedbacks', async (req, res) => {
   try {
     const { name, message } = req.body;
     
@@ -37,10 +37,11 @@ app.post('/api/v1/feedbacks', async (req, res) => {
     res.status(500).json({ status: 'error', message: 'Internal Server Error' });
   }
 });
- 
+  
 // Rute utama untuk tes di browser
 app.get('/', (req, res) => {
   res.send('Backend API is running smoothly!');
 });
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
