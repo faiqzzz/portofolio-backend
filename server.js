@@ -15,8 +15,6 @@ const pool = new Pool({
 
 // Endpoint disesuaikan menjadi /api/feedbacks (tanpa /v1/) agar cocok dengan frontend
 app.post('/api/feedbacks', async (req, res) => {
-    // ... logika insert database
-});
   try {
     const { name, message } = req.body;
     
