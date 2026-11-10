@@ -3,14 +3,14 @@ const cors = require('cors');
 const { Pool } = require('pg');
 require('dotenv').config();
 
-const app = express();
-app.use(express.json());
-app.use(cors());
+const { Pool } = require('pg');
+require('dotenv').config();
 
-// Koneksi ke PostgreSQL Supabase menggunakan .env
+// Koneksi ke PostgreSQL Supabase dengan paksaan IPv4 (family: 4)
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false } // Wajib untuk database cloud seperti Supabase
+  ssl: { rejectUnauthorized: false },
+  family: 4 // <--- Ini kunci penangkal error ENETUNREACH!
 });
 
 // Endpoint disesuaikan menjadi /api/feedbacks (tanpa /v1/) agar cocok dengan frontend
