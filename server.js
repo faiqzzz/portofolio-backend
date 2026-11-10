@@ -7,15 +7,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Konfigurasi Pool eksplisit anti-IPv6 (Supabase-friendly)
+// Menggunakan DATABASE_URL dari environment variable Render / Supabase
 const pool = new Pool({
-  user: 'postgres',
-  password: 'Balikpapan27062006!',
-  host: 'db.ddfmiqxmacudbkwuzydr.supabase.co',
-  database: 'postgres',
-  port: 5432,
-  ssl: { rejectUnauthorized: false },
-  family: 4
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
 });
 
 // Endpoint feedbacks
@@ -38,8 +33,8 @@ app.post('/api/feedbacks', async (req, res) => {
       data: newFeedback.rows[0]
     });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+    console.error('Database Error:', err.message);
+    res.status(500).json({ status: 'error', message: 'Internal Server Error', details: err.message });
   }
 });
   
