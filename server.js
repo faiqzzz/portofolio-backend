@@ -3,13 +3,14 @@ const cors = require('cors');
 const { Pool } = require('pg');
 require('dotenv').config();
 
-const { Pool } = require('pg');
-require('dotenv').config();
+const app = express();
+app.use(express.json());
+app.use(cors());
 
-// Konfigurasi eksplisit untuk menghindari jebakan IPv6 Supabase
+// Konfigurasi Pool eksplisit anti-IPv6 (Supabase-friendly)
 const pool = new Pool({
   user: 'postgres',
-  password: 'Balikpapan27062006!', // Password asli pakai tanda seru biasa di sini aman karena dipisah
+  password: 'Balikpapan27062006!',
   host: 'db.ddfmiqxmacudbkwuzydr.supabase.co',
   database: 'postgres',
   port: 5432,
