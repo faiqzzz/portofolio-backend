@@ -3,15 +3,18 @@ const cors = require('cors');
 const { Pool } = require('pg');
 require('dotenv').config();
 
-const app = express();
-app.use(express.json());
-app.use(cors());
+const { Pool } = require('pg');
+require('dotenv').config();
 
-// Konfigurasi Pool dengan paksaan IPv4 (family: 4)
+// Konfigurasi eksplisit untuk menghindari jebakan IPv6 Supabase
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  user: 'postgres',
+  password: 'Balikpapan27062006!', // Password asli pakai tanda seru biasa di sini aman karena dipisah
+  host: 'db.ddfmiqxmacudbkwuzydr.supabase.co',
+  database: 'postgres',
+  port: 5432,
   ssl: { rejectUnauthorized: false },
-  family: 4 // <--- Penangkal error ENETUNREACH
+  family: 4
 });
 
 // Endpoint feedbacks
