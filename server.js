@@ -1,19 +1,16 @@
 const express = require('express');
 const cors = require('cors');
-const { Pool } = require('pg');
+const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Menggunakan DATABASE_URL dari environment variable Render / Supabase
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
-});
+// Inisialisasi Supabase Client (Lewat HTTPS, anti ribet SSL/Pooler)
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Endpoint feedbacks
 app.post('/api/feedbacks', async (req, res) => {
@@ -24,18 +21,20 @@ app.post('/api/feedbacks', async (req, res) => {
       return res.status(400).json({ status: 'fail', message: 'Message cannot be empty' });
     }
 
-    const query = 'INSERT INTO feedbacks (name, message) VALUES ($1, $2) RETURNING *';
-    const values = [name || 'Anonymous', message];
-    
-    const newFeedback = await pool.query(query, values);
+    const { data, error } = await supabase
+      .from('feedbacks')
+      .insert([{ name: name || 'Anonymous', message }])
+      .select();
+
+    if (error) throw error;
 
     res.status(201).json({
       status: 'success',
       message: 'Feedback saved successfully',
-      data: newFeedback.rows[0]
+      data: data[0]
     });
   } catch (err) {
-    console.error('Database Error:', err.message);
+    console.error('Supabase Error:', err.message);
     res.status(500).json({ status: 'error', message: 'Internal Server Error', details: err.message });
   }
 });
